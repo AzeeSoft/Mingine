@@ -162,6 +162,8 @@ xcopy "$(SolutionDir)packages\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\li
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="nativeGameLoop.cpp" />
+    <ClCompile Include="ropeTest.cpp" />
     <ClCompile Include="src\asset.cpp" />
     <ClCompile Include="src\assetDatabase.cpp" />
     <ClCompile Include="src\box2dDebugDraw.cpp" />
@@ -171,6 +173,8 @@ xcopy "$(SolutionDir)packages\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\li
     <ClCompile Include="src\tmxToLua.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="nativeGameLoop.h" />
+    <ClInclude Include="ropeTest.h" />
     <ClInclude Include="src\asset.h" />
     <ClInclude Include="src\assetDatabase.h" />
     <ClInclude Include="src\box2dDebugDraw.h" />
