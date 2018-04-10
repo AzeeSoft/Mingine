@@ -140,7 +140,8 @@ namespace mingine
 		if(keys[MOVE_LEFT_KEY_CODE])
 		{
 			force.x = -1;
-		} if(keys[MOVE_RIGHT_KEY_CODE])
+		} 
+		else if(keys[MOVE_RIGHT_KEY_CODE])
 		{
 			force.x = 1;
 		}
@@ -148,15 +149,21 @@ namespace mingine
 		if (keys[MOVE_UP_KEY_CODE])
 		{
 			force.y = 1;
-		} else if (keys[MOVE_DOWN_KEY_CODE])
+		} 
+		else if (keys[MOVE_DOWN_KEY_CODE])
 		{
 			force.y = -1;
 		}
 
-		if (force.x != 0 || force.y != 0 ) {
+		if (force.x != 0 || force.y != 0 ) 
+		{
 			force.x *= 500;
 			force.y *= 400;
-			playerBody->ApplyForceToCenter(force, true);
+
+			if (playerBody != nullptr) 
+			{
+				playerBody->ApplyForceToCenter(force, true);
+			}
 		}
 	}
 
