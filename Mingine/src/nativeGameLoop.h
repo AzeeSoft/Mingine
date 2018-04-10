@@ -1,7 +1,9 @@
 #pragma once
+#include "platform.h"
 
 namespace mingine
 {
+
 	class NativeGameLoop
 	{
 	public:

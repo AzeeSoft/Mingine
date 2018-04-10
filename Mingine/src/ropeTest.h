@@ -1,12 +1,11 @@
 #pragma once
 
 #include "nativeGameLoop.h"
-#include "src/box2dDebugDraw.h"
-#include "src/platform.h"
+#include "box2dDebugDraw.h"
+#include "platform.h"
 using namespace mingine;
 
 namespace mingine {
-	extern char stringBuilderBuffer[MAX_STRING];
 
 	class RopeTest : public NativeGameLoop
 	{
@@ -22,9 +21,17 @@ namespace mingine {
 		b2Vec2 gravity;
 		b2World world;
 
-		b2Body* body = nullptr;
+		b2Body* playerBody = nullptr;
 
 		box2dDebugDraw dd;
+
+	private:
+		const int MOVE_RIGHT_KEY_CODE = 79;
+		const int MOVE_LEFT_KEY_CODE = 80;
+		const int MOVE_DOWN_KEY_CODE = 81;
+		const int MOVE_UP_KEY_CODE = 82;
+
+		int ropeSegments;
 
 	public:
 		

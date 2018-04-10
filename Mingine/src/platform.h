@@ -5,6 +5,11 @@ typedef unsigned char uint8_t;
 namespace mingine {
 
 const int MAX_STRING = 512;
+const int NUM_SDL_SCANCODES = 512;
+
+extern bool prevKeys[NUM_SDL_SCANCODES];
+extern bool keys[NUM_SDL_SCANCODES];
+extern char stringBuilderBuffer[MAX_STRING];
 
 namespace Render
 {

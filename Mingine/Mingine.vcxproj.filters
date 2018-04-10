@@ -36,10 +36,10 @@
     <ClCompile Include="src\box2dDebugDraw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ropeTest.cpp">
+    <ClCompile Include="src\nativeGameLoop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="nativeGameLoop.cpp">
+    <ClCompile Include="src\ropeTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,10 +62,10 @@
     <ClInclude Include="src\box2dDebugDraw.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ropeTest.h">
+    <ClInclude Include="src\nativeGameLoop.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="nativeGameLoop.h">
+    <ClInclude Include="src\ropeTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

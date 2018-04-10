@@ -17,7 +17,6 @@ namespace mingine {
 
 const int MAX_CONTROLLERS = 4;
 const int JOYSTICK_DEADZONE = 6000;
-const int NUM_SDL_SCANCODES = 512;
 bool prevKeys[NUM_SDL_SCANCODES];
 bool keys[NUM_SDL_SCANCODES];
 
