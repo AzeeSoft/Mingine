@@ -23,11 +23,10 @@ using namespace mingine;
 const int FPS = 60;
 const int FRAME_TIME_NS = (1000 / FPS) * 1000 * 1000;
 
-char* CONFIG_FILE = "config.lua";
-
-namespace mingine {
-
-}
+// swap the following two lines if you want to ignore 
+// lua features and write your code natively.
+const char* CONFIG_FILE = "assets/scripts/core/noop.lua";
+//const char* CONFIG_FILE = "config.lua";
 
 // the entire game state lives here
 lua_State* luaState;
@@ -35,6 +34,7 @@ AssetDatabase assetDatabase;
 
 // Set this to the current game loop (or) set to nullptr if not working natively.
 NativeGameLoop* nativeGameLoop = new RopeTest();
+
 
 int mouseX = -1;
 int mouseY = -1;
@@ -563,11 +563,6 @@ int main(int argc, char* argv[])
     lua_register(luaState, "GetFrameTime", GetFrameTime);
     lua_register(luaState, "SetAssetBasePath", SetAssetBasePath);
     lua_register(luaState, "LoadTmxFile", LoadTmxFile);
-        
-	if(nativeGameLoop != nullptr)
-	{
-		CONFIG_FILE = "assets/scripts/core/noop.lua";
-	}
 
     runScript(luaState, CONFIG_FILE);
     call(luaState, "Start");
