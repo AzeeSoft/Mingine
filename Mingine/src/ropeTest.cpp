@@ -2,9 +2,11 @@
 #include "platform.h"
 #include <Box2D/Dynamics/b2Fixture.h>
 #include <Box2D/Common/b2Draw.h>
+#include "GameMath.h"
 
 
-namespace mingine {
+namespace mingine 
+{
 
 	RopeTest::RopeTest(): gravity(0.0f, -10.0f), world(gravity)
 	{
@@ -103,6 +105,30 @@ namespace mingine {
 			prevRopeSegmentBody = ropeSegmentBody;
 		}
 
+		int boxesCount = 20;
+		for(int i = 0; i<boxesCount; i++)
+		{
+			float x = GameMath::getRandomBetween(-50, 50);
+			float y = GameMath::getRandomBetween(-20, 0);
+
+			b2BodyDef bodyDef;
+			bodyDef.type = b2_dynamicBody;
+			bodyDef.position.Set(x, y);
+			bodyDef.angle = 0;
+
+			b2Body* boxBody = world.CreateBody(&bodyDef);
+
+			b2CircleShape circleShape;
+			circleShape.m_radius = 1.0f;
+
+			b2FixtureDef fixtureDef;
+			fixtureDef.shape = &circleShape;
+			fixtureDef.density = 1.0f;
+			fixtureDef.friction = 0.6f;
+
+			boxBody->CreateFixture(&fixtureDef);
+		}
+
 	}
 
 	void RopeTest::update()
@@ -136,7 +162,7 @@ namespace mingine {
 
 	void RopeTest::draw()
 	{
-		clearScreen(68, 136, 204);
+		clearScreen(0,0,0);
 		world.DrawDebugData();
 	}
 }

@@ -1,6 +1,7 @@
 #include "nativeGameLoop.h"
 
-namespace mingine {
+namespace mingine 
+{
 	NativeGameLoop::NativeGameLoop()
 	{
 	}

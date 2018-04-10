@@ -165,6 +165,7 @@ xcopy "$(SolutionDir)packages\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\li
     <ClCompile Include="src\asset.cpp" />
     <ClCompile Include="src\assetDatabase.cpp" />
     <ClCompile Include="src\box2dDebugDraw.cpp" />
+    <ClCompile Include="src\GameMath.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\nativeGameLoop.cpp" />
     <ClCompile Include="src\platform.cpp" />
@@ -176,6 +177,7 @@ xcopy "$(SolutionDir)packages\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\li
     <ClInclude Include="src\asset.h" />
     <ClInclude Include="src\assetDatabase.h" />
     <ClInclude Include="src\box2dDebugDraw.h" />
+    <ClInclude Include="src\GameMath.h" />
     <ClInclude Include="src\nativeGameLoop.h" />
     <ClInclude Include="src\platform.h" />
     <ClInclude Include="src\ropeTest.h" />

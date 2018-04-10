@@ -5,7 +5,8 @@
 #include "platform.h"
 using namespace mingine;
 
-namespace mingine {
+namespace mingine 
+{
 
 	class RopeTest : public NativeGameLoop
 	{
