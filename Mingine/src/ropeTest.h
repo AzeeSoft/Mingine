@@ -3,7 +3,10 @@
 #include "nativeGameLoop.h"
 #include "box2dDebugDraw.h"
 #include "platform.h"
+#include <vector>
+
 using namespace mingine;
+using namespace std;
 
 namespace mingine 
 {
@@ -32,7 +35,7 @@ namespace mingine
 		const int MOVE_DOWN_KEY_CODE = 81;
 		const int MOVE_UP_KEY_CODE = 82;
 
-		int ropeSegments;
+		int ropeSegmentsCount;
 
 	public:
 		

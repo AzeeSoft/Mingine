@@ -10,7 +10,7 @@ namespace mingine
 
 	RopeTest::RopeTest(): gravity(0.0f, -10.0f), world(gravity)
 	{
-		ropeSegments = 20;
+		ropeSegmentsCount = 20;
 	}
 
 	RopeTest::~RopeTest()
@@ -70,7 +70,7 @@ namespace mingine
 
 		b2Body* prevRopeSegmentBody = playerBody;
 
-		for(int i=0; i<ropeSegments; i++)
+		for(int i=0; i<ropeSegmentsCount; i++)
 		{
 			b2BodyDef bodyDef;
 			bodyDef.type = b2_dynamicBody;

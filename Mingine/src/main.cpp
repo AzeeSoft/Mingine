@@ -17,8 +17,10 @@
 #include "box2dDebugDraw.h"
 #include "nativeGameLoop.h"
 #include "ropeTest.h"
+#include "../FinalGame.h"
 
 using namespace mingine;
+using namespace azee;
 
 const int FPS = 60;
 const int FRAME_TIME_NS = (1000 / FPS) * 1000 * 1000;
@@ -33,7 +35,7 @@ lua_State* luaState;
 AssetDatabase assetDatabase;
 
 // Set this to the current game loop (or) set to nullptr if not working natively.
-NativeGameLoop* nativeGameLoop = new RopeTest();
+NativeGameLoop* nativeGameLoop = new FinalGame();
 
 
 int mouseX = -1;
