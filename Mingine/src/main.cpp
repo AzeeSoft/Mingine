@@ -35,6 +35,7 @@ lua_State* luaState;
 AssetDatabase assetDatabase;
 
 // Set this to the current game loop (or) set to nullptr if not working natively.
+//NativeGameLoop* nativeGameLoop = nullptr;
 NativeGameLoop* nativeGameLoop = FinalGame::getInstance();
 
 

@@ -7,7 +7,7 @@ namespace mingine
 	class Shader
 	{
 	public:
-		Shader(bool init);
+		Shader();
 		~Shader();
 
 		void init();

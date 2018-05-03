@@ -7,6 +7,10 @@ namespace azee
 	class Camera : mingine::GameObject
 	{
 	public:
+		glm::vec3 cameraPos;
+		glm::vec3 cameraFront;
+		glm::vec3 cameraUp;
+
 		Camera(mingine::NativeGameLoop& native_game_loop);
 		~Camera();
 
@@ -20,9 +24,6 @@ namespace azee
 	private:
 		float yaw, pitch;
 
-		glm::vec3 cameraPos;
-		glm::vec3 cameraFront;
-		glm::vec3 cameraUp;
 
 		glm::mat4 viewMatrix;
 	};

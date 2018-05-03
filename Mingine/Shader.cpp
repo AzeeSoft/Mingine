@@ -6,12 +6,8 @@
 
 namespace mingine
 {
-	Shader::Shader(bool init)
+	Shader::Shader()
 	{
-		if(init)
-		{
-			this->init();
-		}
 	}
 
 	Shader::~Shader()

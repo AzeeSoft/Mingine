@@ -26,7 +26,6 @@ namespace azee
 
 	void Camera::update()
 	{
-
 		float xoffset = mingine::deltaMouseX;
 		float yoffset = -mingine::deltaMouseY;
 
@@ -48,7 +47,13 @@ namespace azee
 		front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 		cameraFront = glm::normalize(front);
 
-		float cameraSpeed = 2.5f * mingine::deltaTime;
+		float cameraSpeed = 3.0f * mingine::deltaTime;
+
+		if (mingine::keys[225])
+		{
+			cameraSpeed *= 2;
+		}
+
 		if (mingine::keys[26])
 		{
 			cameraPos += cameraSpeed * cameraFront;

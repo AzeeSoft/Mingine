@@ -12,6 +12,7 @@
 
 #include <cassert>
 #include <cstdio>
+#include <GL/glew.h>
 
 namespace mingine {
 
@@ -85,7 +86,7 @@ void detectCurrentDisplayMode(int displayIndex)
     }
 }
 
-bool initPlatform(int screenWidth, int screenHeight, bool fullscreen)
+bool initPlatform(int screenWidth, int screenHeight, bool fullscreen, bool openGL)
 {
     for (int i = 0; i < MAX_CONTROLLERS; ++i)
     {
@@ -110,46 +111,56 @@ bool initPlatform(int screenWidth, int screenHeight, bool fullscreen)
         flags |= SDL_WINDOW_FULLSCREEN;
     }
 
-    window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, flags);
+	if(openGL)
+	{
+		flags |= SDL_WINDOW_OPENGL;
+		window = SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenWidth, screenHeight, flags);
+	}
+	else {
+		window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, flags);
+	}
 
     if (!window)
     {
         return false;
     }
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	if(!openGL)
+	{
+		renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-    if (!renderer)
-    {
-        return false;
-    }
+		if (!renderer)
+		{
+			return false;
+		}
 
-    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+		 SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+		 SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
+		 SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
 
-    int imageFlags = IMG_INIT_PNG;
-    if (!(IMG_Init(imageFlags) & imageFlags))
-    {
-        return false;
-    }
-        
-    if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024) == -1)
-    {
-        return false;
-    }
+		 int imageFlags = IMG_INIT_PNG;
+		 if (!(IMG_Init(imageFlags) & imageFlags))
+		 {
+			 return false;
+		 }
 
-    if (TTF_Init() == -1)
-    {
-        return false;
-    }
+		 if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024) == -1)
+		 {
+			 return false;
+		 }
 
-    backbuffer = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, screenWidth, screenHeight);
-    
-    if (!backbuffer)
-    {
-        return false;
-    }
+		if (TTF_Init() == -1)
+		{
+			return false;
+		}
+
+		 backbuffer = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, screenWidth, screenHeight);
+
+		 if (!backbuffer)
+		 {
+			 return false;
+		 }
+	}
         
     return true;
 }
@@ -414,6 +425,11 @@ void presentFrame()
 void endUpdate()
 {
     SDL_memcpy(&prevKeys, &keys, NUM_SDL_SCANCODES);
+}
+
+SDL_Window* getWindow()
+{
+	return window;
 }
 
 void stopMusic()

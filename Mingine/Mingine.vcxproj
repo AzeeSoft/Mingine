@@ -162,6 +162,7 @@ xcopy "$(SolutionDir)packages\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\li
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Brush.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="FinalGame.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -177,9 +178,11 @@ xcopy "$(SolutionDir)packages\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\li
     <ClCompile Include="src\ropeTest.cpp" />
     <ClCompile Include="src\tinyxml2.cpp" />
     <ClCompile Include="src\tmxToLua.cpp" />
-    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Brush.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="FinalGame.h" />
     <ClInclude Include="GameObject.h" />
@@ -194,7 +197,8 @@ xcopy "$(SolutionDir)packages\zlib.v140.windesktop.msvcstl.dyn.rt-dyn.1.2.8.8\li
     <ClInclude Include="src\ropeTest.h" />
     <ClInclude Include="src\tinyxml2.h" />
     <ClInclude Include="src\tmxToLua.h" />
-    <ClInclude Include="Model.h" />
+    <ClInclude Include="Cube.h" />
+    <ClInclude Include="UIManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

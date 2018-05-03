@@ -1,4 +1,5 @@
 #pragma once
+#include "SDL.h"
 
 typedef unsigned char uint8_t;
 
@@ -37,7 +38,7 @@ union RenderParameters
 
 void log(const char* message);
 void showErrorBox(const char* message);
-bool initPlatform(int screenWidth, int screenHeight, bool fullscreen);
+bool initPlatform(int screenWidth, int screenHeight, bool fullscreen, bool openGL = false);
 void freePlatform();
 void setWindowTitle(const char* title);
 bool pollEvents(void(*eventHandler)(const char*, int value));
@@ -56,5 +57,6 @@ void presentFrame();
 void presentFrameRotating();
 void stopMusic();
 void endUpdate();
+SDL_Window* getWindow();
 
 } // end of namespace mingine 

@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <SDL_ttf.h>
 
 using namespace mingine;
 
@@ -12,7 +13,7 @@ namespace azee
 {
 	FinalGame* FinalGame::finalGameInstance = nullptr;
 
-	FinalGame::FinalGame() : camera(*this), model(*this)
+	FinalGame::FinalGame() : uiManager(*this), camera(*this), brush(*this, glm::vec3(), glm::vec3())
 	{
 		finalGameInstance = this;
 	}
@@ -31,6 +32,11 @@ namespace azee
 		std::cout << "Line " << line << ": " << msg;
 	}
 
+	bool FinalGame::areVec3Equal(glm::vec3 x, glm::vec3 y)
+	{
+		return (x.x == y.x && x.y == y.y && x.z == y.z);
+	}
+
 	bool FinalGame::setOpenGLAttributes()
 	{
 		// SDL_GL_CONTEXT_CORE gives us only the newer version, deprecated functions are disabled
@@ -46,6 +52,25 @@ namespace azee
 		return true;
 	}
 
+	void FinalGame::checkCollision()
+	{
+		for (int i = 0; i < cubes.size(); i++)
+		{
+			Cube* cube = cubes[i];
+			cube->update();
+
+			float dist = glm::distance(brush.position, cube->position);
+			if (dist <= 0.55f)
+			{
+				// Collision detected
+				if (cube->wireframe && areVec3Equal(cube->color, brush.color))
+				{
+					cube->wireframe = false;
+				}
+			}
+		}
+	}
+
 	void FinalGame::clearBackground(float r, float g, float b)
 	{
 		glClearColor(r, g, b, 1.0f);
@@ -53,22 +78,8 @@ namespace azee
 
 	bool FinalGame::initGame()
 	{
-		// Initialize SDL's Video subsystem
-		if (SDL_Init(SDL_INIT_VIDEO) < 0)
-		{
-			std::cout << "Failed to init SDL\n";
-			return false;
-		}
-
-		// Create our window 
-		mainWindow = SDL_CreateWindow("Final Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_OPENGL);
-
-		if (!mainWindow)
-		{
-			std::cout << "Unable to create window\n";
-			log("SDLError: Error creating a window", __LINE__);
-			return false;
-		}
+		initPlatform(screenWidth, screenHeight, false, true);
+		mainWindow = getWindow();
 
 		SDL_ShowCursor(SDL_DISABLE);
 		SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -93,64 +104,151 @@ namespace azee
 		return true;
 	}
 
+	void FinalGame::reset()
+	{
+		elapsedTime = 0;
+
+		for (int i = 0; i < cubes.size(); i++)
+		{
+			Cube* cube = cubes[i];
+			cube->color = colors[i % colors.size()];
+			cube->wireframe = true;
+			cube->relocate(maxBound);
+		}
+	}
+
 	void FinalGame::start()
 	{
 		initGame();
-		model.start();
-		camera.start();
 
-		lightPos = glm::vec3(0, 1.5f, 0);
+		lightPos = glm::vec3(1, 1.5f, 0);
+
+		int totalCubes = colors.size() * cubesPerColor;
+
+		for (int i = 0; i < totalCubes; i++)
+		{
+			Cube* cube = new Cube(*this, glm::vec3(0, 0, 0), colors[i % colors.size()]);
+			cube->relocate(maxBound);
+
+			cubes.push_back(cube);
+
+			cube->start();
+		}
+
+		camera.start();
+		brush.start();
+
+		brush.color = colors[0];
+
+
+		uiManager.start();
 	}
 
 	void FinalGame::update()
 	{
-		model.update();
+		elapsedTime += deltaTime;
+
+		if(elapsedTime > resetTime)
+		{
+			reset();
+		}
+
 		camera.update();
+		brush.update();
+
+		if (keys[30]) // 1
+		{
+			brush.color = colors[0];
+		}
+		else if (keys[31]) // 2
+		{
+			brush.color = colors[1];
+		}
+		else if (keys[32]) // 3
+		{
+			brush.color = colors[2];
+		}
+
+		if (keys[44] && !prevKeys[44]) // Space Down
+		{
+			int targetColor = 0;
+			for(int i=0; i< colors.size() - 1; i++)
+			{
+				if(areVec3Equal(brush.color, colors[i]))
+				{
+					targetColor = i + 1;
+					break;
+				}
+			}
+
+			brush.color = colors[targetColor];
+		}
+
+		checkCollision();
+
+		uiManager.update();
 	}
 
 	void FinalGame::draw()
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		clearBackground(0, 0, 0);
-		if (keys[21])
+		clearBackground(1.0, 1.0, 1.0);
+
+		for (int i = 0; i < cubes.size(); i++)
 		{
-			clearBackground(1, 0, 0);
-		}
-		else if (keys[10])
-		{
-			clearBackground(0, 1, 0);
-		}
-		else if (keys[5])
-		{
-			clearBackground(0, 0, 1);
+			Cube* cube = cubes[i];
+			cube->draw();
 		}
 
-		model.draw();
 		camera.draw();
+		brush.draw();
+		uiManager.draw();
 
 		SDL_GL_SwapWindow(mainWindow);
 	}
 
-	void FinalGame::applyCommonShaderValues(Shader& shader)
+	void FinalGame::applyCommonFixedShaderValues(Shader& shader)
+	{
+		shader.use();
+
+		glm::mat4 projection;
+		projection = glm::perspective(glm::radians(45.0f), screenWidth / (float)screenHeight, 0.1f, 100.0f);
+
+		int projLoc = glGetUniformLocation(shader.getProgramId(), "projection");
+		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+
+		int lightPosLoc = glGetUniformLocation(shader.getProgramId(), "lightPos");
+		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
+
+		glm::vec3 lightColor = glm::vec3(0.7, 0.8, 0.5);
+
+		int lightColorLoc = glGetUniformLocation(shader.getProgramId(), "lightColor");
+		glUniform3f(lightColorLoc, lightColor.x, lightColor.y, lightColor.z);
+	}
+
+	void FinalGame::applyCommonDynamicShaderValues(Shader& shader)
 	{
 		shader.use();
 
 		int viewLoc = glGetUniformLocation(shader.getProgramId(), "view");
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(FinalGame::getInstance()->getCamera().getViewMatrix()));
 
-		glm::vec3 lightColor = glm::vec3(0.7, 0.8, 0.5);
-
-		int lightColorLoc = glGetUniformLocation(shader.getProgramId(), "lightColor");
-		glUniform3f(lightColorLoc, lightColor.x, lightColor.y, lightColor.z);
-
-		int lightPosLoc = glGetUniformLocation(shader.getProgramId(), "lightPos");
-		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
-
 		glm::vec3 cameraPos = camera.getCameraPos();
 
 		int viewPosLoc = glGetUniformLocation(shader.getProgramId(), "viewPos");
 		glUniform3f(viewPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
+	}
+
+	int FinalGame::getScreenWidth() const
+	{
+		return screenWidth;
+	}
+
+	int FinalGame::getScreenHeight() const
+	{
+		return screenHeight;
 	}
 
 	Camera FinalGame::getCamera() const
