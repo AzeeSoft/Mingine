@@ -35,7 +35,7 @@ lua_State* luaState;
 AssetDatabase assetDatabase;
 
 // Set this to the current game loop (or) set to nullptr if not working natively.
-NativeGameLoop* nativeGameLoop = new FinalGame();
+NativeGameLoop* nativeGameLoop = FinalGame::getInstance();
 
 
 int mouseX = -1;
@@ -578,6 +578,10 @@ int main(int argc, char* argv[])
     while (pollEvents(setGlobal) && !quit)
     {
         auto currentTime = high_resolution_clock::now();
+		
+		auto deltaMillis = duration_cast<milliseconds>(currentTime - previousTime);
+		deltaTime = deltaMillis.count()/1000.0f;
+
         auto delta = duration_cast<nanoseconds>(currentTime - previousTime);
         behind += delta.count();
         previousTime = currentTime;

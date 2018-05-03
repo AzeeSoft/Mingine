@@ -19,6 +19,10 @@ const int MAX_CONTROLLERS = 4;
 const int JOYSTICK_DEADZONE = 6000;
 bool prevKeys[NUM_SDL_SCANCODES];
 bool keys[NUM_SDL_SCANCODES];
+float deltaTime;
+
+float deltaMouseX;
+float deltaMouseY;
 
 // this is scratchpad memory to build strings for logging, debugging, etc.
 char stringBuilderBuffer[MAX_STRING];
@@ -176,6 +180,9 @@ void setWindowTitle(const char* title)
 // parameter eventHandler can be null
 bool pollEvents(void (*eventHandler)(const char*, int value))
 {
+	deltaMouseX = 0;
+	deltaMouseY = 0;
+
     SDL_Event event;
 
     bool running = true;
@@ -243,6 +250,10 @@ bool pollEvents(void (*eventHandler)(const char*, int value))
 			snprintf(stringBuilderBuffer, sizeof(stringBuilderBuffer), "controller_%i_attached", event.jdevice.which);
 			eventHandler(stringBuilderBuffer, 0);
             break;
+		case SDL_MOUSEMOTION:
+			deltaMouseX = event.motion.xrel;
+			deltaMouseY = event.motion.yrel;
+			break;
         case SDL_KEYDOWN:
             keys[event.key.keysym.scancode] = true;
 
