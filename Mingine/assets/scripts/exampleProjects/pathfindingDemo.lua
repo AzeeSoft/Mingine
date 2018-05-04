@@ -45,7 +45,7 @@ SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 768
 
 ARRIVE_DISTANCE = 14
-MAX_ACCELERATION = 3.0 -- how fast can the agent change direction and speed?
+MAX_ACCELERATION = 1.0 -- how fast can the agent change direction and speed?
 
 --user interface state
 MODE_WAYPOINT_AUTHORING = 1
@@ -53,15 +53,8 @@ MODE_AGENT_PATHFINDING_DEMO = 2
 prevLeftMouseButtonDown = false
 isLeftClickDragging = false
 selectedWaypoint = nil
--- mode = MODE_WAYPOINT_AUTHORING
-mode = MODE_AGENT_PATHFINDING_DEMO
+mode = MODE_WAYPOINT_AUTHORING
 waypointsFilePath = assetDirectory .. "/waypoints/" .. "pathfindingDemoGraph.lua"
-
-
-
-bgImage = nil
-
-
 
 -- helper functions:
 
@@ -396,7 +389,6 @@ function Start()
     SetWindowTitle("Waypoint Editor -- Press TAB to toggle PIE mode.")
     
     font = LoadFont("fonts/8_bit_pusab.ttf", 16)
-    bgImage = LoadImage("images/TD_BG.png")
     
     -- create pathfollowing agent
     local image = LoadImage("images/arrow.png")
@@ -430,14 +422,11 @@ end
 
 function Draw()
     ClearScreen(15, 15, 15)
-    DrawImage(bgImage, 0, 0)
     
-    if mode == MODE_WAYPOINT_AUTHORING then 
-        DrawWaypointGraph()
-    end
-
+    DrawWaypointGraph()
+       
     if mode == MODE_AGENT_PATHFINDING_DEMO then
-        -- DrawPath(agent)
+        DrawPath(agent)
         DrawEntity(agent)
     end
         

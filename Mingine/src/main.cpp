@@ -587,7 +587,7 @@ int main(int argc, char* argv[])
         behind += delta.count();
         previousTime = currentTime;
                 
-        // probably should be while, but causes
+        // should be while, but causes
         // noticable frame skips with low res art
         if (behind >= FRAME_TIME_NS)
         {

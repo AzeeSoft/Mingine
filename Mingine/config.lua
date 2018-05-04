@@ -53,7 +53,7 @@ dofile(scriptDirectory .. "exampleProjects/states.lua")
 --dofile(scriptDirectory .. "exampleProjects/platformer_1.lua")
 --dofile(scriptDirectory .. "exampleProjects/platformer_2.lua")
 --dofile(scriptDirectory .. "exampleProjects/platformer_3.lua")
--- dofile(scriptDirectory .. "exampleProjects/platformer_4.lua")
+dofile(scriptDirectory .. "exampleProjects/platformer_4.lua")
 --dofile(scriptDirectory .. "exampleProjects/spaceGame/spaceGame.lua")
 
 -- dofile(scriptDirectory .. "privateProjects/config.lua")
