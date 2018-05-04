@@ -1,10 +1,21 @@
 #pragma once
+#include "SDL.h"
 
 typedef unsigned char uint8_t;
 
 namespace mingine {
 
 const int MAX_STRING = 512;
+const int NUM_SDL_SCANCODES = 512;
+
+extern bool prevKeys[NUM_SDL_SCANCODES];
+extern bool keys[NUM_SDL_SCANCODES];
+extern char stringBuilderBuffer[MAX_STRING];
+extern float deltaTime;
+
+extern float deltaMouseX;
+extern float deltaMouseY;
+
 
 namespace Render
 {
@@ -27,7 +38,7 @@ union RenderParameters
 
 void log(const char* message);
 void showErrorBox(const char* message);
-bool initPlatform(int screenWidth, int screenHeight, bool fullscreen);
+bool initPlatform(int screenWidth, int screenHeight, bool fullscreen, bool openGL = false);
 void freePlatform();
 void setWindowTitle(const char* title);
 bool pollEvents(void(*eventHandler)(const char*, int value));
@@ -46,5 +57,6 @@ void presentFrame();
 void presentFrameRotating();
 void stopMusic();
 void endUpdate();
+SDL_Window* getWindow();
 
 } // end of namespace mingine 

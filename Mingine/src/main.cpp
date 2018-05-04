@@ -15,26 +15,30 @@
 #include "assetDatabase.h"
 #include "tmxToLua.h"
 #include "box2dDebugDraw.h"
+#include "nativeGameLoop.h"
+#include "ropeTest.h"
+#include "../FinalGame.h"
+
 using namespace mingine;
+using namespace azee;
 
 const int FPS = 60;
 const int FRAME_TIME_NS = (1000 / FPS) * 1000 * 1000;
 
-// swap the following two lines if you want to ignore
+// swap the following two lines if you want to ignore 
 // lua features and write your code natively.
-const char * const CONFIG_FILE = "assets/scripts/core/noop.lua";
-//const char * const CONFIG_FILE = "config.lua";
-
-namespace mingine {
-    extern const int NUM_SDL_SCANCODES = 512;
-    extern bool prevKeys[NUM_SDL_SCANCODES];
-    extern bool keys[NUM_SDL_SCANCODES];
-    extern char stringBuilderBuffer[MAX_STRING];
-}
+const char* CONFIG_FILE = "assets/scripts/core/noop.lua";
+//const char* CONFIG_FILE = "config.lua";
 
 // the entire game state lives here
 lua_State* luaState;
 AssetDatabase assetDatabase;
+
+// Set this to the current game loop (or) set to nullptr if not working natively.
+//NativeGameLoop* nativeGameLoop = nullptr;
+NativeGameLoop* nativeGameLoop = FinalGame::getInstance();
+
+
 int mouseX = -1;
 int mouseY = -1;
 bool quit = false;
@@ -562,7 +566,7 @@ int main(int argc, char* argv[])
     lua_register(luaState, "GetFrameTime", GetFrameTime);
     lua_register(luaState, "SetAssetBasePath", SetAssetBasePath);
     lua_register(luaState, "LoadTmxFile", LoadTmxFile);
-        
+
     runScript(luaState, CONFIG_FILE);
     call(luaState, "Start");
     Start();
@@ -575,11 +579,15 @@ int main(int argc, char* argv[])
     while (pollEvents(setGlobal) && !quit)
     {
         auto currentTime = high_resolution_clock::now();
+		
+		auto deltaMillis = duration_cast<milliseconds>(currentTime - previousTime);
+		deltaTime = deltaMillis.count()/1000.0f;
+
         auto delta = duration_cast<nanoseconds>(currentTime - previousTime);
         behind += delta.count();
         previousTime = currentTime;
                 
-        // probably should be while, but causes
+        // should be while, but causes
         // noticable frame skips with low res art
         if (behind >= FRAME_TIME_NS)
         {
@@ -605,144 +613,23 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-/*
-
-// Move the code below to a separate .h/.cpp if
-// you plan to do serious work in native code. This will
-// keep your code separated from main.cpp, which is focused
-// on the game loop and lua integration. 
-
 void Start()
 {
-    if (!initPlatform(1024, 768, false))
-    {
-        freePlatform();
-    }
-
-	setWindowTitle("Native Mingine Example");
-}
-
-void Update()
-{
-	// do nothing
-}
-
-void Draw()
-{
-    //clearScreen(68, 136, 204);
-}
-
-*/
-
-// box2d hello world demo
-// This code is taken more or less verbatim
-// from the HelloWorld project provided with Box2D 2.3
-
-float32 timeStep = 1.0f / FPS;
-int32 velocityIterations = 6;
-int32 positionIterations = 2;
-
-b2Vec2 gravity(0.0f, -10.0f);
-b2World world(gravity);
-b2Body* body = nullptr;
-
-box2dDebugDraw dd;
-
-void Start()
-{
-	int screenWidth = 1024;
-	int screenHeight = 768;
-
-	if (!initPlatform(screenWidth, screenHeight, false))
-	{
-		freePlatform();
+	if (nativeGameLoop != nullptr) {
+		nativeGameLoop->start();
 	}
-
-	setWindowTitle("Box 2D Example");
-
-	uint32 flags = b2Draw::e_shapeBit;
-	
-	//uncomment to see bounding boxes.
-	//flags += b2Draw::e_aabbBit;
-	
-	dd.SetFlags(flags);
-
-	dd.camera.x = screenWidth / 2;
-	dd.camera.y = screenHeight / 2;
-
-	world.SetDebugDraw(&dd);
-
-	// Define the ground body.
-	b2BodyDef groundBodyDef;
-	groundBodyDef.position.Set(0.0f, -10.0f);
-
-	// Call the body factory which allocates memory for the ground body
-	// from a pool and creates the ground box shape (also from a pool).
-	// The body is also added to the world.
-	b2Body* groundBody = world.CreateBody(&groundBodyDef);
-
-	// Define the ground box shape.
-	b2PolygonShape groundBox;
-
-	// The extents are the half-widths of the box.
-	groundBox.SetAsBox(25.0f, 10.0f);
-
-	// Add the ground fixture to the ground body.
-	groundBody->CreateFixture(&groundBox, 0.0f);
-
-	// Define the dynamic body. We set its position and call the body factory.
-	b2BodyDef bodyDef;
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(0, 10.0f);
-	bodyDef.angle = 3.14f / 3;
-	body = world.CreateBody(&bodyDef);
-
-	// Define another box shape for our dynamic body.
-	b2PolygonShape dynamicBox;
-	dynamicBox.SetAsBox(1.0f, 1.0f);
-
-	// Define the dynamic body fixture.
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &dynamicBox;
-	fixtureDef.density = 1.0f;
-	fixtureDef.friction = 0.6f;
-	
-	// Add the shape to the body.
-	body->CreateFixture(&fixtureDef);
-
-	// create a circular body
-	b2BodyDef bd;
-	bd.position.Set(25.5f, 10.0f);
-	bd.type = b2_dynamicBody;
-		
-	b2Body* body = world.CreateBody(&bd);
-
-	b2CircleShape shape;
-	shape.m_radius = 1.5f;
-
-	b2FixtureDef fd;
-	fd.shape = &shape;
-	fd.density = 20.0f;
-	fd.restitution = 0.8f;
-	body->CreateFixture(&fd);
 }
 
 void Update()
 {
-	// Instruct the world to perform a single step of simulation.
-	// It is generally best to keep the time step and iterations fixed.
-	world.Step(timeStep, velocityIterations, positionIterations);
-
-	// Now print the position and angle of the body.
-	b2Vec2 position = body->GetPosition();
-	float32 angle = body->GetAngle();
-		
-	snprintf(stringBuilderBuffer, sizeof(stringBuilderBuffer), "%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
-	log(stringBuilderBuffer);
+	if (nativeGameLoop != nullptr) {
+		nativeGameLoop->update();
+	}
 }
 
 void Draw()
 {
-	clearScreen(68, 136, 204);
-	world.DrawDebugData();
+	if (nativeGameLoop != nullptr) {
+		nativeGameLoop->draw();
+	}
 }
