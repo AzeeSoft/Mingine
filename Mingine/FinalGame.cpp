@@ -6,6 +6,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <SDL_ttf.h>
+#include <iomanip> // setprecision
+#include <sstream> // stringstream
 
 using namespace mingine;
 
@@ -71,9 +73,42 @@ namespace azee
 		}
 	}
 
+	void FinalGame::checkWinState()
+	{
+		bool foundNonFilledBox = false;
+		for (int i = 0; i < cubes.size(); i++)
+		{
+			Cube* cube = cubes[i];
+			if(cube->wireframe)
+			{
+				foundNonFilledBox = true;
+			}
+		}
+
+		if (!foundNonFilledBox) {
+			SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "You Won", "Congratulations. You have successfully painted this world with the divine colors!", mainWindow);
+			skipUpdate = true;
+			reset();
+		}
+	}
+
 	void FinalGame::clearBackground(float r, float g, float b)
 	{
 		glClearColor(r, g, b, 1.0f);
+	}
+
+	void FinalGame::updateTitle()
+	{
+		std::string title = "Paint the World";
+		title.append(" | Time Left: ");
+
+		std::stringstream stream;
+		stream << std::fixed << std::setprecision(2) << resetTime - elapsedTime;
+		std::string timeLeft = stream.str();
+
+		title.append(timeLeft);
+		title.append(" s");
+		setWindowTitle(title.c_str());
 	}
 
 	bool FinalGame::initGame()
@@ -146,10 +181,23 @@ namespace azee
 
 	void FinalGame::update()
 	{
+		if (skipUpdate) 
+		{
+			skipUpdate = false;
+			return;
+		}
+
+		checkWinState();
+
 		elapsedTime += deltaTime;
 
 		if(elapsedTime > resetTime)
 		{
+			elapsedTime = resetTime;
+			updateTitle();
+
+			SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "You Lost", "You've failed to paint the world in time. Try Again!", mainWindow);
+			skipUpdate = true;
 			reset();
 		}
 
@@ -185,8 +233,9 @@ namespace azee
 		}
 
 		checkCollision();
-
 		uiManager.update();
+
+		updateTitle();
 	}
 
 	void FinalGame::draw()

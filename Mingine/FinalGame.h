@@ -33,15 +33,18 @@ namespace azee
 
 		static FinalGame* finalGameInstance;
 
+		// To skip the first update after showing the message box (otherwise, the deltaTime is calculated from the last update, which would be huge)
+		bool skipUpdate = false;
+
 		int screenWidth = 1024;
 		int screenHeight = 768;
 
 		float elapsedTime = 0;
-		float resetTime = 60;
+		float resetTime = 30;
 
 		float maxBound = 10.0f;
 
-		int cubesPerColor = 5;
+		int cubesPerColor = 3;
 		std::vector<glm::vec3> colors = {
 			glm::vec3(1, 0, 0),
 			glm::vec3(0, 1, 0),
@@ -64,7 +67,9 @@ namespace azee
 		bool setOpenGLAttributes();
 
 		void checkCollision();
+		void checkWinState();
 		void clearBackground(float r, float g, float b);
+		void updateTitle();
 		bool initGame();
 		void reset();
 	};
